@@ -6,16 +6,18 @@ mainRunDir=$1
 inputDir=${mainRunDir}"inputs/"
 outputDir=${mainRunDir}"outputs/"
 bamMapFile=$2
-toolDirName=$3
+toolName=$3
+batchName=$4
 
+mkdir -p ${mainRunDir}"deliverables/"${batchName}
 for j in CCRC UCEC; do
-	cd ${outputDir}${j}
+	cd ${outputDir}${batchName}"/"${j}
 	mkdir -p tmp
 	ls *cnv  > tmp/output_list
 	while IFS= read -r filename; do
-		echo ${filename} | awk -F ${j} '{print $2}' | awk -F '.' '{print $1}' > tmp/tmp_specimen
+		echo ${filename} | awk -F '.' '{print $1}' > tmp/tmp_specimen
 		cat tmp/tmp_specimen | grep -f - ${inputDir}${bamMapFile} | awk -F '\\s' '{print $2}' | uniq > tmp/tmp_case
 
-		cp ${filename} ${mainRunDir}"deliverables/"$(cat tmp/tmp_case)"."${toolDirName}".cnv"
+		cp ${filename} ${mainRunDir}"deliverables/"${batchName}"/"$(cat tmp/tmp_case)"."${toolName}".cnv"
 	done < tmp/output_list
 done
