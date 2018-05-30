@@ -1,0 +1,7 @@
+JAVAPATH: '/usr/bin/java'
+GATKPATH: '/home/software/gatk-4.beta.5/gatk-package-4.beta.5-local.jar'
+referencePath: '/diskmnt/Projects/CPTAC3CNV/gatk4wxscnv/inputs/Homo_sapiens_assembly19.fasta'
+exomeBedPath: '/diskmnt/Projects/CPTAC3CNV/gatk4wxscnv/inputs/nexterarapidcapture_exome_targetedregions_v1.2.bed'
+outputDIR: '/diskmnt/Projects/CPTAC3CNV/gatk4wxscnv/outputs/LUAD.b1/LUAD/'
+normalBamPaths: '/diskmnt/Projects/CPTAC3CNV/gatk4wxscnv/inputs/CPTAC3.b1.LUAD.BamMap.dat_WXS_blood_normal_LUAD.list'
+cancerBamPaths: '/diskmnt/Projects/CPTAC3CNV/gatk4wxscnv/inputs/CPTAC3.b1.LUAD.BamMap.dat_WXS_tumor_LUAD.list'
