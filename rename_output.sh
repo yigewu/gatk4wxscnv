@@ -8,9 +8,11 @@ outputDir=${mainRunDir}"outputs/"
 bamMapFile=$2
 toolName=$3
 batchName=$4
+cancerType=$5
 
 mkdir -p ${mainRunDir}"deliverables/"${batchName}
-for j in CCRC UCEC; do
+while read j
+do
 	cd ${outputDir}${batchName}"/"${j}
 	mkdir -p tmp
 	ls *cnv  > tmp/output_list
@@ -20,4 +22,4 @@ for j in CCRC UCEC; do
 
 		cp ${filename} ${mainRunDir}"deliverables/"${batchName}"/"$(cat tmp/tmp_case)"."${toolName}".cnv"
 	done < tmp/output_list
-done
+done<${cancerType}
