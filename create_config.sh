@@ -13,6 +13,7 @@ batchName=$8
 cancerType=$9
 normalType=${10}
 
+mkdir -p ${outputDir}
 mkdir -p ${outputDir}${batchName}
 while read j
 do
@@ -22,8 +23,14 @@ do
 	echo "referencePath: '"${inputDir}${refFile}"'" >> "config_"${j}".yml"
 	echo "exomeBedPath: '"${inputDir}${exomeBedFile}"'" >> "config_"${j}".yml"
 	echo "outputDIR: '"${outputDir}${batchName}"/"${j}"/'" >> "config_"${j}".yml"
-	echo "normalBamPaths: '"${inputDir}${bamMapFile}"_"${bamType}"_"${normalType}"_normal_"${j}".list'" >> "config_"${j}".yml"
-	echo "cancerBamPaths: '"${inputDir}${bamMapFile}"_"${bamType}"_tumor_"${j}".list'" >> "config_"${j}".yml"
+
+	## create normal bam paths
+	ls ${mainRunDir}"bams/normal/"*"bam" > ${inputDir}${j}"_normalBamPaths.list"
+	echo "normalBamPaths: '"${inputDir}${j}"_normalBamPaths.list'" >> "config_"${j}".yml"
+
+	## create tumor bam paths
+	ls ${mainRunDir}"bams/tumor/"*"bam" > ${inputDir}${j}"_tumorBamPaths.list"
+	echo "cancerBamPaths: '"${inputDir}${j}"_tumorBamPaths.list'" >> "config_"${j}".yml"
 
 	## make output directories
 	mkdir -p ${outputDir}${batchName}"/"${j}

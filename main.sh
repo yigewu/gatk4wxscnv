@@ -3,23 +3,21 @@
 ## the name of the master directory holding inputs, outputs and processing codes
 toolName="gatk4wxscnv"
 ## the name of the batch
-batchName="LUAD.b2"
+batchName="tcga_6k_genes.targetIntervals.bed"
 ## the name the directory holding the processing code
-toolDirName=${toolName}"."${batchName}
+toolDirName=${toolName}
 ## the path to the master directory
-mainRunDir="/diskmnt/Projects/CPTAC3CNV/"${toolName}"/"
-## the path to the directory holding the manifest for BAM files
-bamMapDir="/diskmnt/Projects/cptac_downloads/data/GDC_import/import.config/CPTAC3.b2.LUAD/"
+mainRunDir="/home/yigewu2012/"
+## the google cloud bucket path to inputs
+inputGSpath="gs://dinglab/yige/gatk4wxscnv/inputs/"
 ## the name of the manifiest for BAM files
-bamMapFile="CPTAC3.b2.LUAD.BamMap.dat"
+bamMapprefix=${batchName}
 ## the path to the directory holding the reference fasta file
-refDir=" /diskmnt/Projects/Users/mwyczalk/data/docker/data/A_Reference/"
+refGSpath="gs://dinglab/reference/Homo_sapiens_assembly19.fasta"
 ## the name of the reference fasta file
 refFile="Homo_sapiens_assembly19.fasta"
-## the path to the directory holding the exome target bed file
-exomeBedDir="/diskmnt/Projects/cptac/gatk4wxscnv/target_bed/"
-## the name of the exome target bed file
-exomeBedFile="nexterarapidcapture_exome_targetedregions_v1.2.bed"
+## the name of the exome target bed file, needs to be edited!
+exomeBedFile="tcga_6k_genes.targetIntervals.bed"
 ## the type of the BAM file
 bamType="WXS"
 ## the path to the java binary
@@ -27,7 +25,7 @@ javaPath="/usr/bin/java"
 ## the path to the gatk jar file
 gatkPath="/home/software/gatk-4.beta.5/gatk-package-4.beta.5-local.jar"
 ## the path to the parent directory containing input BAM files
-bamDir="/diskmnt/Projects/cptac_downloads/data/GDC_import"
+bamDir=${mainRunDir}"bams/"
 ## the name of the docker image
 imageName="yigewu/gatk4wxscnv:v1"
 ## the path to the binary file for the language to run inside docker container
@@ -40,7 +38,7 @@ if [ $# -eq 0 ]
     exit 1
 fi
 ## the name of the processing version
-version=1.1
+version=1.0
 ## the file prefix for the gene-level CNV report
 genelevelFile="gene_level_CNV"
 ## the file containing the cancer types to be processed
@@ -48,30 +46,38 @@ cancerType="cancer_types.txt"
 ## tissue type of the normal samples
 normalType="blood"
 
+## prep_vm.sh and config_disks.sh should only run once
+## mount new disk
+cm="bash config_disks.sh ${mainRunDir}"
+
 ## get dependencies into inputs directory, so as to not potentially change the original dependency files
-cm="bash get_dependencies.sh ${mainRunDir} ${bamMapDir} ${bamMapFile} ${refDir} ${refFile} ${exomeBedDir} ${exomeBedFile}"
+cm="bash get_dependencies.sh ${mainRunDir} ${bamMapprefix} ${refGSpath} ${refFile} ${exomeBedFile} ${inputGSpath}"
 ${cm}
 
 ## split the paths to the bam files into batches
-cm="bash split_bam_path.sh ${mainRunDir} ${bamMapFile} ${bamType} ${cancerType} ${normalType}"
-${cm}
+cm="bash copy_bams.sh ${mainRunDir} ${bamMapprefix}"
+echo ${cm}
 
 ## create configure files
-cm="bash create_config.sh ${mainRunDir} ${bamMapFile} ${bamType} ${javaPath} ${gatkPath} ${refFile} ${exomeBedFile} ${batchName} ${cancerType} ${normalType}"
+cm="bash create_config.sh ${mainRunDir} ${bamMapprefix} ${bamType} ${javaPath} ${gatkPath} ${refFile} ${exomeBedFile} ${batchName} ${cancerType} ${normalType}"
 ${cm}
 
 ## use tmux to run jobs
 while read j
 do
-	bash run_tmux.sh ${id} ${j} "/home/software/gatk4wxscnv/" "gatk4wxscnv.py" " --config "${mainRunDir}${toolDirName}"/config_"${j}".yml" ${mainRunDir}"outputs/"${batchName}"/"${j} ${toolDirName} ${mainRunDir} ${bamDir} ${imageName} ${binaryFile} 
+	bash run_docker.sh ${id} ${j} "/home/software/gatk4wxscnv/" "gatk4wxscnv.py" " --config "${mainRunDir}${toolDirName}"/config_"${j}".yml" ${mainRunDir}"outputs/"${batchName}"/"${j} ${toolDirName} ${mainRunDir} ${bamDir} ${imageName} ${binaryFile} 
 done<${cancerType}
+exit 1
 
 ## get gene-level copy number values
-cm="bash get_gene_level_cnv.sh ${mainRunDir} ${bamMapFile} ${bamType} ${javaPath} ${gatkPath} ${refFile} ${exomeBedFile} ${batchName} ${genelevelFile} ${version} ${id} ${cancerType} ${toolDirName}"
+cm="bash get_gene_level_cnv.sh ${mainRunDir} ${bamMapprefix} ${bamType} ${javaPath} ${gatkPath} ${refFile} ${exomeBedFile} ${batchName} ${genelevelFile} ${version} ${id} ${cancerType} ${toolDirName}"
 echo ${cm}
 
 ## format outputs and copy to deliverables
-cm="bash rename_output.sh ${mainRunDir} ${bamMapFile} ${toolName} ${batchName} ${cancerType} ${toolDirName}"
+cm="bash rename_output.sh ${mainRunDir} ${bamMapprefix} ${toolName} ${batchName} ${cancerType} ${toolDirName}"
+echo ${cm}
+
+cm="bash push_git.sh ${batchName} ${version}"
 echo ${cm}
 
 ## clean up docker containers

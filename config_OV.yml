@@ -1,0 +1,7 @@
+JAVAPATH: '/usr/bin/java'
+GATKPATH: '/home/software/gatk-4.beta.5/gatk-package-4.beta.5-local.jar'
+referencePath: '/home/yigewu2012/inputs/Homo_sapiens_assembly19.fasta'
+exomeBedPath: '/home/yigewu2012/inputs/tcga_6k_genes.targetIntervals.bed'
+outputDIR: '/home/yigewu2012/outputs/tcga_6k_genes.targetIntervals.bed/OV/'
+normalBamPaths: '/home/yigewu2012/inputs/OV_normalBamPaths.list'
+cancerBamPaths: '/home/yigewu2012/inputs/OV_tumorBamPaths.list'
