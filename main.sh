@@ -3,7 +3,7 @@
 ## the name of the master directory holding inputs, outputs and processing codes
 toolName="gatk4wxscnv"
 ## the name of the batch
-batchName="tcga_6k_genes.targetIntervals.bed"
+batchName="whole_exome_agilent_1.1_refseq_plus_3_boosters.targetIntervals.bed"
 ## the name the directory holding the processing code
 toolDirName=${toolName}
 ## the path to the master directory
@@ -17,7 +17,7 @@ refGSpath="gs://dinglab/reference/Homo_sapiens_assembly19.fasta"
 ## the name of the reference fasta file
 refFile="Homo_sapiens_assembly19.fasta"
 ## the name of the exome target bed file, needs to be edited!
-exomeBedFile="tcga_6k_genes.targetIntervals.bed"
+exomeBedFile="whole_exome_agilent_1.1_refseq_plus_3_boosters.targetIntervals.bed"
 ## the type of the BAM file
 bamType="WXS"
 ## the path to the java binary
@@ -56,7 +56,7 @@ ${cm}
 
 ## split the paths to the bam files into batches
 cm="bash copy_bams.sh ${mainRunDir} ${bamMapprefix}"
-echo ${cm}
+${cm}
 
 ## create configure files
 cm="bash create_config.sh ${mainRunDir} ${bamMapprefix} ${bamType} ${javaPath} ${gatkPath} ${refFile} ${exomeBedFile} ${batchName} ${cancerType} ${normalType}"
@@ -67,7 +67,6 @@ while read j
 do
 	bash run_docker.sh ${id} ${j} "/home/software/gatk4wxscnv/" "gatk4wxscnv.py" " --config "${mainRunDir}${toolDirName}"/config_"${j}".yml" ${mainRunDir}"outputs/"${batchName}"/"${j} ${toolDirName} ${mainRunDir} ${bamDir} ${imageName} ${binaryFile} 
 done<${cancerType}
-exit 1
 
 ## get gene-level copy number values
 cm="bash get_gene_level_cnv.sh ${mainRunDir} ${bamMapprefix} ${bamType} ${javaPath} ${gatkPath} ${refFile} ${exomeBedFile} ${batchName} ${genelevelFile} ${version} ${id} ${cancerType} ${toolDirName}"

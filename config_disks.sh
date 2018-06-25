@@ -19,3 +19,6 @@ sudo cp /etc/fstab /etc/fstab.backup
 
 ### Use the blkid command to find the UUID for the persistent disk. The system generates this UUID when you format the disk. Use UUIDs to mount persistent disks because UUIDs do not change when you move disks between systems.
 echo UUID=`sudo blkid -s UUID -o value /dev/sdb` ${bamDir} ext4 discard,defaults,nofail 0 2 | sudo tee -a /etc/fstab
+
+## enlarge boot disk
+#sudo growpart /dev/sda 1
