@@ -2,22 +2,24 @@
 
 ## the name of the master directory holding inputs, outputs and processing codes
 toolName="gatk4wxscnv"
-## the name of the batch
-batchName="whole_exome_agilent_1.1_refseq_plus_3_boosters.targetIntervals.bed"
 ## the name the directory holding the processing code
 toolDirName=${toolName}
 ## the path to the master directory
 mainRunDir="/home/yigewu2012/"
 ## the google cloud bucket path to inputs
 inputGSpath="gs://dinglab/yige/gatk4wxscnv/inputs/"
-## the name of the manifiest for BAM files
-bamMapprefix=${batchName}
+## the google cloud bucket path to outputs
+outputGSpath="gs://dinglab/yige/gatk4wxscnv/outputs/"
 ## the path to the directory holding the reference fasta file
 refGSpath="gs://dinglab/reference/Homo_sapiens_assembly19.fasta"
 ## the name of the reference fasta file
 refFile="Homo_sapiens_assembly19.fasta"
 ## the name of the exome target bed file, needs to be edited!
-exomeBedFile="whole_exome_agilent_1.1_refseq_plus_3_boosters.targetIntervals.bed"
+exomeBedFile="SureSelect_All_Exon_V2_with_annotation.hg19.bed"
+## the name of the batch
+batchName=${exomeBedFile}
+## the name of the manifiest for BAM files
+bamMapprefix=${batchName}
 ## the type of the BAM file
 bamType="WXS"
 ## the path to the java binary
@@ -45,28 +47,41 @@ genelevelFile="gene_level_CNV"
 cancerType="cancer_types.txt"
 ## tissue type of the normal samples
 normalType="blood"
+## the path to local directory holding the log files
+logDir=${mainRunDir}"logs/"
 
 ## prep_vm.sh and config_disks.sh should only run once
 ## mount new disk
-cm="bash config_disks.sh ${mainRunDir}"
 
-## get dependencies into inputs directory, so as to not potentially change the original dependency files
-cm="bash get_dependencies.sh ${mainRunDir} ${bamMapprefix} ${refGSpath} ${refFile} ${exomeBedFile} ${inputGSpath}"
-${cm}
+if  grep -Fq ${batchName} ${logDir}"completed_batchName.txt"
+then
+	echo "${batchName} already completed!"
+else
+	cm="bash config_disks.sh ${mainRunDir}"
 
-## split the paths to the bam files into batches
-cm="bash copy_bams.sh ${mainRunDir} ${bamMapprefix}"
-${cm}
+	## get dependencies into inputs directory, so as to not potentially change the original dependency files
+	cm="bash get_dependencies.sh ${mainRunDir} ${bamMapprefix} ${refGSpath} ${refFile} ${exomeBedFile} ${inputGSpath}"
+	${cm}
 
-## create configure files
-cm="bash create_config.sh ${mainRunDir} ${bamMapprefix} ${bamType} ${javaPath} ${gatkPath} ${refFile} ${exomeBedFile} ${batchName} ${cancerType} ${normalType}"
-${cm}
+	## split the paths to the bam files into batches
+	cm="bash copy_bams.sh ${mainRunDir} ${bamMapprefix} ${batchName}"
+	${cm}
 
-## use tmux to run jobs
-while read j
-do
-	bash run_docker.sh ${id} ${j} "/home/software/gatk4wxscnv/" "gatk4wxscnv.py" " --config "${mainRunDir}${toolDirName}"/config_"${j}".yml" ${mainRunDir}"outputs/"${batchName}"/"${j} ${toolDirName} ${mainRunDir} ${bamDir} ${imageName} ${binaryFile} 
-done<${cancerType}
+	## create configure files
+	cm="bash create_config.sh ${mainRunDir} ${bamMapprefix} ${bamType} ${javaPath} ${gatkPath} ${refFile} ${exomeBedFile} ${batchName} ${cancerType} ${normalType}"
+	${cm}
+
+	## use tmux to run jobs
+	while read j
+	do
+		bash run_docker.sh ${id} ${j} "/home/software/gatk4wxscnv/" "gatk4wxscnv.py" " --config "${mainRunDir}${toolDirName}"/config_"${j}".yml" ${mainRunDir}"outputs/"${batchName}"/"${j} ${toolDirName} ${mainRunDir} ${bamDir} ${imageName} ${binaryFile} 
+	done<${cancerType}
+
+	## copy output to google storage
+	cm="bash copy_output.sh ${mainRunDir} ${batchName} ${outputGSpath}"
+	${cm}
+
+fi
 
 ## get gene-level copy number values
 cm="bash get_gene_level_cnv.sh ${mainRunDir} ${bamMapprefix} ${bamType} ${javaPath} ${gatkPath} ${refFile} ${exomeBedFile} ${batchName} ${genelevelFile} ${version} ${id} ${cancerType} ${toolDirName}"
@@ -82,3 +97,4 @@ echo ${cm}
 ## clean up docker containers
 cm="bash clean_docker_containers.sh ${imageName}"
 echo $cm
+

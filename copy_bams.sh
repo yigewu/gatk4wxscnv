@@ -7,6 +7,8 @@ bamDir=${mainRunDir}"bams/"
 mkdir -p ${bamDir}
 
 bamMapprefix=$2
+logDir=${mainRunDir}"logs/"
+batchName=$3
 
 for sample_type in tumor normal; do
 	subBamDir=${bamDir}${sample_type}"/"
@@ -17,6 +19,7 @@ for sample_type in tumor normal; do
 	subBam2copy=${inputDir}${sample_type}"bams2copy.txt" 
 	touch ${subBam2copy} > ${subBam2copy}
 	while read bam_name; do
+		echo ${bam_name}
 		if [ -s ${subBamDir}${bam_name} ];
 		then
 			echo ${bam_name}" copied!"

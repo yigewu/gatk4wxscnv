@@ -22,3 +22,6 @@ echo UUID=`sudo blkid -s UUID -o value /dev/sdb` ${bamDir} ext4 discard,defaults
 
 ## enlarge boot disk
 #sudo growpart /dev/sda 1
+
+## Extend the file system on the disk or the partition to use the added space. If you grew a partition on your disk, specify the partition. If your disk does not have a partition table, specify only the disk ID.
+#sudo resize2fs /dev/sdb
