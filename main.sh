@@ -15,7 +15,7 @@ refGSpath="gs://dinglab/reference/Homo_sapiens_assembly19.fasta"
 ## the name of the reference fasta file
 refFile="Homo_sapiens_assembly19.fasta"
 ## the name of the exome target bed file, needs to be edited!
-exomeBedFile="SureSelect_All_Exon_V2_with_annotation.hg19.bed"
+exomeBedFile="2.1M_Human_Exome.bed"
 ## the name of the batch
 batchName=${exomeBedFile}
 ## the name of the manifiest for BAM files
@@ -74,7 +74,9 @@ else
 	## use tmux to run jobs
 	while read j
 	do
-		bash run_docker.sh ${id} ${j} "/home/software/gatk4wxscnv/" "gatk4wxscnv.py" " --config "${mainRunDir}${toolDirName}"/config_"${j}".yml" ${mainRunDir}"outputs/"${batchName}"/"${j} ${toolDirName} ${mainRunDir} ${bamDir} ${imageName} ${binaryFile} 
+		#bash run_docker.sh ${id} ${j} "/home/software/gatk4wxscnv/" "gatk4wxscnv.py" " --config "${mainRunDir}${toolDirName}"/config_"${j}".yml" ${mainRunDir}"outputs/"${batchName}"/"${j} ${toolDirName} ${mainRunDir} ${bamDir} ${imageName} ${binaryFile} 
+		bash run_docker.sh ${id} ${j} "/home/yigewu2012/gatk4wxscnv/" "gatk4wxscnv.py" " --config "${mainRunDir}${toolDirName}"/config_"${j}".yml" ${mainRunDir}"outputs/"${batchName}"/"${j} ${toolDirName} ${mainRunDir} ${bamDir} ${imageName} ${binaryFile} 
+
 	done<${cancerType}
 
 	## copy output to google storage

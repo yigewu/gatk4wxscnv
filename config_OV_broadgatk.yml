@@ -1,5 +1,5 @@
 JAVAPATH: '/usr/bin/java'
-GATKPATH: '/home/software/gatk-4.beta.5/gatk-package-4.beta.5-local.jar'
+GATKPATH: '/gatk/gatk.jar'
 referencePath: '/home/yigewu2012/inputs/Homo_sapiens_assembly19.fasta'
 exomeBedPath: '/home/yigewu2012/inputs/2.1M_Human_Exome.bed'
 outputDIR: '/home/yigewu2012/outputs/2.1M_Human_Exome.bed/OV/'

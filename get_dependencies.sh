@@ -55,5 +55,8 @@ else
 	gsutil -m cp ${inputGSpath}${exomeBedFile} ${inputDir}
 fi
 
+## get the latest image
+docker pull broadinstitute/gatk
+
 echo "all dependencies complete!"
 echo ""
