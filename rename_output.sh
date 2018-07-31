@@ -11,6 +11,7 @@ batchName=$4
 cancerType=$5
 
 mkdir -p ${mainRunDir}"deliverables/"${batchName}
+mkdir -p ${mainRunDir}"deliverables/"${batchName}"/gene_level/"
 while read j
 do
 	cd ${outputDir}${batchName}"/"${j}
@@ -22,4 +23,7 @@ do
 
 		cp ${filename} ${mainRunDir}"deliverables/"${batchName}"/"$(cat tmp/tmp_case)"."${toolName}".cnv"
 	done < tmp/output_list
+	cp ${outputDir}${batchName}"/"${j}/gene_level/gene_level*tsv ${mainRunDir}"deliverables/"${batchName}"/gene_level/"
 done<${cancerType}
+
+cp ${mainRunDir}${toolName}"."${batchName}"/README.md" ${mainRunDir}"deliverables/"${batchName}"/"

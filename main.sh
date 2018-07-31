@@ -1,19 +1,21 @@
 #!/bin/bash
 
+##TODO: print failed samples into README.file
+
 ## the name of the master directory holding inputs, outputs and processing codes
 toolName="gatk4wxscnv"
 ## the name of the batch
-batchName="LUAD.b2"
+batchName="CPTAC3.d3"
 ## the name the directory holding the processing code
 toolDirName=${toolName}"."${batchName}
 ## the path to the master directory
 mainRunDir="/diskmnt/Projects/CPTAC3CNV/"${toolName}"/"
 ## the path to the directory holding the manifest for BAM files
-bamMapDir="/diskmnt/Projects/cptac_downloads/data/GDC_import/import.config/CPTAC3.b2.LUAD/"
+bamMapDir="/diskmnt/Projects/cptac/GDC_import/import.config/CPTAC3.d3/"
 ## the name of the manifiest for BAM files
-bamMapFile="CPTAC3.b2.LUAD.BamMap.dat"
+bamMapFile="CPTAC3.d3.BamMap.dat"
 ## the path to the directory holding the reference fasta file
-refDir=" /diskmnt/Projects/Users/mwyczalk/data/docker/data/A_Reference/"
+refDir="/diskmnt/Projects/CPTAC3CNV/genomestrip/inputs/Homo_sapiens_assembly19/"
 ## the name of the reference fasta file
 refFile="Homo_sapiens_assembly19.fasta"
 ## the path to the directory holding the exome target bed file
@@ -27,9 +29,9 @@ javaPath="/usr/bin/java"
 ## the path to the gatk jar file
 gatkPath="/home/software/gatk-4.beta.5/gatk-package-4.beta.5-local.jar"
 ## the path to the parent directory containing input BAM files
-bamDir="/diskmnt/Projects/cptac_downloads/data/GDC_import"
+bamDir="/diskmnt/Projects/cptac/GDC_import/data/"
 ## the name of the docker image
-imageName="yigewu/gatk4wxscnv:v1"
+imageName="yigewu/gatk4wxscnv:v2"
 ## the path to the binary file for the language to run inside docker container
 binaryFile="/miniconda3/bin/python3"
 ## the date of the processing
@@ -45,8 +47,11 @@ version=1.1
 genelevelFile="gene_level_CNV"
 ## the file containing the cancer types to be processed
 cancerType="cancer_types.txt"
+echo "UCEC" > ${cancerType}
 ## tissue type of the normal samples
 normalType="blood"
+## file name of the bed file of containing the gene name of different segment
+genebedFile="unique_genes.sorted.rmchr.bed"
 
 ## get dependencies into inputs directory, so as to not potentially change the original dependency files
 cm="bash get_dependencies.sh ${mainRunDir} ${bamMapDir} ${bamMapFile} ${refDir} ${refFile} ${exomeBedDir} ${exomeBedFile}"
@@ -67,11 +72,17 @@ do
 done<${cancerType}
 
 ## get gene-level copy number values
-cm="bash get_gene_level_cnv.sh ${mainRunDir} ${bamMapFile} ${bamType} ${javaPath} ${gatkPath} ${refFile} ${exomeBedFile} ${batchName} ${genelevelFile} ${version} ${id} ${cancerType} ${toolDirName}"
-echo ${cm}
+while read j
+do
+        bash run_tmux.sh ${id} ${j} ${mainRunDir}${toolDirName}"/" "get_gene_level_cnv.sh" " ${mainRunDir} ${bamMapFile} ${bamType} ${javaPath} ${gatkPath} ${refFile} ${exomeBedFile} ${batchName} ${genelevelFile} ${version} ${id} ${cancerType} ${toolDirName}" ${mainRunDir}"outputs/"${batchName}"/"${j} ${toolDirName} ${mainRunDir} ${bamDir} ${imageName} "/bin/bash"
+done<${cancerType}
 
 ## format outputs and copy to deliverables
 cm="bash rename_output.sh ${mainRunDir} ${bamMapFile} ${toolName} ${batchName} ${cancerType} ${toolDirName}"
+echo ${cm}
+
+## push current git repository to remote
+cm="bash push_git.sh ${batchName} ${version}"
 echo ${cm}
 
 ## clean up docker containers
