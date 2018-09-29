@@ -70,11 +70,14 @@ done<${cancerType}
 
 while read j
 do
-        bash run_tmux.sh ${id} ${j} ${mainRunDir}${toolDirName}"/" "get_gene_level_cnv.sh" " ${mainRunDir} ${bamMapFile} ${bamType} ${javaPath} ${gatkPath} ${refFile} ${exomeBedFile} ${batchName} ${genelevelFile} ${version} ${id} ${cancerType} ${toolDirName}" ${mainRunDir}"outputs/"${batchName}"/"${j} ${toolDirName} ${mainRunDir} ${bamDir} ${imageName} "/bin/bash"
+        bash run_tmux.sh ${id} ${j} ${mainRunDir}${toolDirName}"/" "get_gene_level_cnv_by_case.sh" " ${mainRunDir} ${bamMapFile} ${bamType} ${javaPath} ${gatkPath} ${refFile} ${exomeBedFile} ${batchName} ${genelevelFile} ${version} ${id} ${cancerType} ${toolDirName}" ${mainRunDir}"outputs/"${batchName}"/"${j} ${toolDirName} ${mainRunDir} ${bamDir} ${imageName} "/bin/bash"
 done<${cancerType}
 
 ## format outputs and copy to deliverables
 cm="bash rename_output.sh ${mainRunDir} ${bamMapFile} ${toolName} ${batchName} ${cancerType} ${toolDirName}"
+echo ${cm}
+
+cm="bash liftover_cnv.sh ${mainRunDir} ${bamMapFile} ${toolName} ${batchName} ${cancerType} ${toolDirName} &>${mainRunDir}logs/liftover_${batchName}.txt"
 echo ${cm}
 
 ## push current git repository to remote
