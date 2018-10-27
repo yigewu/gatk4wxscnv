@@ -3,7 +3,7 @@
 ## the name of the master directory holding inputs, outputs and processing codes
 toolName="gatk4wxscnv"
 ## the name of the batch
-batchName="CPTAC3.b4"
+batchName="CPTAC3.b4.GC_corrected"
 ## the name the directory holding the processing code
 toolDirName=${toolName}"."${batchName}
 ## the path to the master directory
@@ -47,10 +47,12 @@ genelevelFile="gene_level_CNV"
 cancerType="cancer_types.txt"
 ## tissue type of the normal samples
 normalType="blood"
+inputDir=${mainRunDir}"inputs/"
+outputDir=${mainRunDir}"outputs/"
 
 ## get dependencies into inputs directory, so as to not potentially change the original dependency files
 cm="bash get_dependencies.sh ${mainRunDir} ${bamMapDir} ${bamMapFile} ${refDir} ${refFile} ${exomeBedDir} ${exomeBedFile}"
-${cm}
+#${cm}
 
 ## split the paths to the bam files into batches
 cm="bash split_bam_path.sh ${mainRunDir} ${bamMapFile} ${bamType} ${cancerType} ${normalType}"
@@ -63,15 +65,22 @@ ${cm}
 ## use tmux to run jobs
 while read j
 do
-	bash run_tmux.sh ${id} ${j} "/home/software/gatk4wxscnv/" "gatk4wxscnv.py" " --config "${mainRunDir}${toolDirName}"/config_"${j}".yml" ${mainRunDir}"outputs/"${batchName}"/"${j} ${toolDirName} ${mainRunDir} ${bamDir} ${imageName} ${binaryFile} 
+	bash run_tmux.sh ${id} ${j} ${mainRunDir}${toolDirName}'/' "gatk4wxscnv.py" " --config "${mainRunDir}${toolDirName}"/config_"${j}".yml" ${mainRunDir}"outputs/"${batchName}"/"${j} ${toolDirName} ${mainRunDir} ${bamDir} ${imageName} ${binaryFile} 
 done<${cancerType}
 
 ## get gene-level copy number values
-cm="bash get_gene_level_cnv.sh ${mainRunDir} ${bamMapFile} ${bamType} ${javaPath} ${gatkPath} ${refFile} ${exomeBedFile} ${batchName} ${genelevelFile} ${version} ${id} ${cancerType} ${toolDirName}"
+cm="bash get_gene_level_cnv_by_case.sh ${mainRunDir} ${bamMapFile} ${bamType} ${javaPath} ${gatkPath} ${refFile} ${exomeBedFile} ${batchName} ${genelevelFile} ${version} ${id} ${cancerType} ${toolDirName}"
 echo ${cm}
 
 ## format outputs and copy to deliverables
 cm="bash rename_output.sh ${mainRunDir} ${bamMapFile} ${toolName} ${batchName} ${cancerType} ${toolDirName}"
+echo ${cm}
+
+## liftover .cnv output to build 38
+cm="bash liftover_cnv.sh ${mainRunDir} ${bamMapFile} ${toolName} ${batchName} ${cancerType} ${toolDirName} &>${mainRunDir}logs/liftover_${batchName}.txt"
+echo ${cm}
+
+cm="bash make_manifest.sh ${mainRunDir} ${bamMapFile} ${toolName} ${batchName} ${cancerType} ${toolDirName}"
 echo ${cm}
 
 ## clean up docker containers

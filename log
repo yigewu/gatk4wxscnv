@@ -1,0 +1,15 @@
+C3L-00008.gatk4wxscnv.cnv
+ 319  957 6478 /diskmnt/Projects/CPTAC3CNV/gatk4wxscnv/deliverables/CPTAC3.b4/liftover/tmp_start.b37.bed
+@ 2018-08-08 14:18:27: Read chain_file:  /diskmnt/Datasets/TCGA/MC3/GRCh38_liftOver/GRCh37_to_GRCh38.chain.gz
+  319  2173 13528 /diskmnt/Projects/CPTAC3CNV/gatk4wxscnv/deliverables/CPTAC3.b4/liftover/tmp_start.b38.bed
+  299  2093 13007 /diskmnt/Projects/CPTAC3CNV/gatk4wxscnv/deliverables/CPTAC3.b4/liftover/tmp_start.b38.noFail.bed
+  319  3190 24764 /diskmnt/Projects/CPTAC3CNV/gatk4wxscnv/deliverables/CPTAC3.b4/liftover/tmp_start.b37.2bemerged.bed
+  299  5382 37101 /diskmnt/Projects/CPTAC3CNV/gatk4wxscnv/deliverables/CPTAC3.b4/liftover/tmp_start.b38.merged.bed
+  299  2093 17138 /diskmnt/Projects/CPTAC3CNV/gatk4wxscnv/deliverables/CPTAC3.b4/liftover/C3L-00008.gatk4wxscnv.b38.cnv
+ 299  897 6189 /diskmnt/Projects/CPTAC3CNV/gatk4wxscnv/deliverables/CPTAC3.b4/liftover/tmp_end.b37.bed
+@ 2018-08-08 14:18:29: Read chain_file:  /diskmnt/Datasets/TCGA/MC3/GRCh38_liftOver/GRCh37_to_GRCh38.chain.gz
+  299  2069 13113 /diskmnt/Projects/CPTAC3CNV/gatk4wxscnv/deliverables/CPTAC3.b4/liftover/tmp_end.b38.bed
+  291  2037 12905 /diskmnt/Projects/CPTAC3CNV/gatk4wxscnv/deliverables/CPTAC3.b4/liftover/tmp_end.b38.noFail.bed
+  299  2990 23327 /diskmnt/Projects/CPTAC3CNV/gatk4wxscnv/deliverables/CPTAC3.b4/liftover/tmp_end.b37.2bemerged.bed
+  291  5238 36473 /diskmnt/Projects/CPTAC3CNV/gatk4wxscnv/deliverables/CPTAC3.b4/liftover/tmp_end.b38.merged.bed
+  291  2037 16669 /diskmnt/Projects/CPTAC3CNV/gatk4wxscnv/deliverables/CPTAC3.b4/liftover/C3L-00008.gatk4wxscnv.b38.cnv

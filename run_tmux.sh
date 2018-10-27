@@ -35,6 +35,6 @@ arg=$5
 ## working directory inside the docker container
 workDir=$6
 
-bashCMD="tmux new-session -d -s "${toolDirName}"_"${scriptName}"_"${t}"_"${c}" 'docker run --user "${uid}":"${gid}" -v "${mainRunDir}":"${mainRunDir}" -v "${bamDir}":"${bamDir}" -w "${workDir}" "${imageName}" "${binaryFile}" "${scriptDir}${scriptName}${arg}" |& tee "${mainRunDir}"logs/"${scriptName}"_"${t}"_"${c}".log'" 
+bashCMD="tmux new-session -d -s "${toolDirName}"_"${scriptName}"_"${t}"_"${c}" 'docker run --user "${uid}":"${gid}" -v "${mainRunDir}":"${mainRunDir}" -v "${bamDir}":"${bamDir}" -w "${workDir}" "${imageName}" "${binaryFile}" "${scriptDir}${scriptName}${arg}" |& tee "${mainRunDir}"logs/"${scriptName}"_"${t}"_"${c}"_"$(date +%Y%m%d%H%M%S)".log'" 
 echo $bashCMD
 #$bashCMD

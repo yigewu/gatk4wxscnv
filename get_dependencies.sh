@@ -36,3 +36,8 @@ else
         echo "exome target bed file is being copied"
 	cp ${exomeBedDir}${exomeBedFile} ${inputDir}${exomeBedFile}
 fi
+
+cd ${inputDir}
+wget https://github.com/broadinstitute/picard/releases/download/2.18.14/picard.jar
+wget ftp://webdata2:webdata2@ussd-ftp.illumina.com/documentation/Chemistry_Documentation/SamplePreps_Nextera/NexteraRapidCapture/NexteraRapidCapture_Exome_Probes_v1.2.txt
+

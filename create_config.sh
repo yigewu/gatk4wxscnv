@@ -16,16 +16,34 @@ normalType=${10}
 mkdir -p ${outputDir}${batchName}
 while read j
 do
-	touch "config_"${j}".yml" > "config_"${j}".yml"
-	echo "JAVAPATH: '"${javaPath}"'" >> "config_"${j}".yml"
-	echo "GATKPATH: '"${gatkPath}"'" >> "config_"${j}".yml"
-	echo "referencePath: '"${inputDir}${refFile}"'" >> "config_"${j}".yml"
-	echo "exomeBedPath: '"${inputDir}${exomeBedFile}"'" >> "config_"${j}".yml"
-	echo "outputDIR: '"${outputDir}${batchName}"/"${j}"/'" >> "config_"${j}".yml"
-	echo "normalBamPaths: '"${inputDir}${bamMapFile}"_"${bamType}"_"${normalType}"_normal_"${j}".list'" >> "config_"${j}".yml"
-	echo "cancerBamPaths: '"${inputDir}${bamMapFile}"_"${bamType}"_tumor_"${j}".list'" >> "config_"${j}".yml"
+	configFile="config_"${j}".yml"
+	touch ${configFile} > ${configFile}
+	echo "JAVAPATH: '"${javaPath}"'" >> ${configFile}
+	echo "GATKPATH: '"${gatkPath}"'" >> ${configFile}
+	echo "referencePath: '"${inputDir}${refFile}"'" >> ${configFile}
+	echo "exomeBedPath: '"${inputDir}${exomeBedFile}"'" >> ${configFile}
+	echo "outputDIR: '"${outputDir}${batchName}"/"${j}"/'" >> ${configFile}
+	echo "normalBamPaths: '"${inputDir}${bamMapFile}"_"${bamType}"_"${normalType}"_normal_"${j}".list'" >> ${configFile}
+	echo "cancerBamPaths: '"${inputDir}${bamMapFile}"_"${bamType}"_tumor_"${j}".list'" >> ${configFile}
 
 	## make output directories
 	mkdir -p ${outputDir}${batchName}"/"${j}
+done<${cancerType}
+
+mkdir -p ${outputDir}${batchName}
+while read j
+do
+	configFile="config_"${j}"_"${normalType}"_normal.yml"
+	outDir=${outputDir}${batchName}"/"${j}"_germline/"
+        touch ${configFile} > ${configFile}
+        echo "JAVAPATH: '"${javaPath}"'" >> ${configFile}
+        echo "GATKPATH: '"${gatkPath}"'" >> ${configFile}
+        echo "referencePath: '"${inputDir}${refFile}"'" >> ${configFile}
+        echo "exomeBedPath: '"${inputDir}${exomeBedFile}"'" >> ${configFile}
+        echo "outputDIR: '"${outDir}"'" >> ${configFile}
+        echo "normalBamPaths: '"${inputDir}${bamMapFile}"_"${bamType}"_"${normalType}"_normal_"${j}".list'" >> ${configFile}
+        echo "cancerBamPaths: '"${inputDir}${bamMapFile}"_"${bamType}"_"${normalType}"_normal_"${j}".list'" >> ${configFile}
+        ## make output directories
+        mkdir -p ${outDir}
 done<${cancerType}
 echo "created the config files!"
