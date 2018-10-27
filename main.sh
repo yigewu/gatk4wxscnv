@@ -86,3 +86,7 @@ echo ${cm}
 ## clean up docker containers
 cm="bash clean_docker_containers.sh ${imageName}"
 echo $cm
+
+## push current git repository to remote
+cm="bash push_git.sh ${batchName} ${version}"
+echo ${cm}
